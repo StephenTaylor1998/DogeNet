@@ -295,7 +295,7 @@ def doge_net50_32x32(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
     return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes, resolution=resolution, heads=heads)
 
 
-def doge_net50_cifar(num_classes=15, resolution=(224, 224), heads=4, **kwargs):
+def doge_net50_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
     return BotNet(BottleNeck, [6, 6, 2, 2], num_classes=num_classes,
                   resolution=resolution, heads=heads, layer3="Transformer")  # resnet50加入两层transformer
 
