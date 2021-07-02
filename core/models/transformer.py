@@ -302,7 +302,7 @@ def doge_net50_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
 
 def main():
     x = torch.randn([2, 3, 32, 32])
-    model = doge_net50_32x32(resolution=tuple(x.shape[2:]), heads=8)  # 18857295
+    model = doge_net50_cifar(resolution=tuple(x.shape[2:]), heads=8)  # 18857295
     # model = doge_net50_64x64(resolution=tuple(x.shape[2:]), heads=8)  # 4178255
     # model = efficient_b0()
     # model = efficientnet_pytorch.EfficientNet.from_name("efficientnet-b0")
