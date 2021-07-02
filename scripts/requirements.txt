@@ -1,0 +1,11 @@
+# basic envirenment
+torch
+torchvision
+
+# if you need an efficientnet implement,
+# this package will only use in file
+# custom_model_trainer.py and $(SourceRoot)/core/models/efficientnet.py
+efficientnet_pytorch
+
+# if you want to use scripts in $(SourceRoot)/data/postprocess
+matplotlib
