@@ -157,15 +157,29 @@ def adjust_learning_rate(optimizer, epoch, args):
         param_group['lr'] = lr
 
 
-def adjust_learning_rate_cifar(optimizer, epoch, args):
-    if epoch < 150:
-        lr = args.lr
-    elif epoch < 250:
-        lr = args.lr * 0.1
-    elif epoch < 350:
-        lr = args.lr * 0.01
+# def adjust_learning_rate_cifar(optimizer, epoch, args):
+#     if epoch < 150:
+#         lr = args.lr
+#     elif epoch < 250:
+#         lr = args.lr * 0.1
+#     elif epoch < 350:
+#         lr = args.lr * 0.01
+#     else:
+#         lr = args.lr * 0.001
+#     for param_group in optimizer.param_groups:
+#         param_group['lr'] = lr
+
+def adjust_learning_rate_cifar(optimizer, epoch, args, warm=10):
+    epoch += 1
+    if epoch < warm:
+        lr = args.lr * (epoch / warm)
     else:
-        lr = args.lr * 0.001
+        epoch = epoch - warm
+        total = args.epochs - warm
+        factor = np.cos(epoch * 3.1415926 / total)
+        lr = args.lr * factor
+
+    print(f"[INFO] Learning Rate = {lr}")
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
 
