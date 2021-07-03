@@ -177,8 +177,9 @@ def adjust_learning_rate_cifar(optimizer, epoch, args, warm=10):
     else:
         epoch = epoch - warm
         total = args.epochs - warm
-        factor = np.cos(epoch * 3.1415926 / total)
-        lr = args.lr * factor
+        factor = np.cos(epoch * 3.1415926 / total) / 2.0 + 0.5 + 1e-10
+        lr = args.lr * factor + 1e-9
+        # print(factor)
 
     print(f"[INFO] Learning Rate = {lr}")
     for param_group in optimizer.param_groups:
@@ -200,3 +201,21 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+
+if __name__ == '__main__':
+    import torch
+
+    class Args:
+        def __init__(self):
+            self.lr = 0.1
+            self.epochs = 400
+            self.param_groups = []
+    args = Args()
+    model = torch.nn.Module()
+
+    for i in range(args.epochs):
+        adjust_learning_rate_cifar(args, i, args)
+
+
+

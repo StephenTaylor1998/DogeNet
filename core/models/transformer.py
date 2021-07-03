@@ -3,10 +3,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
-from torchsummary import summary
+
 
 __all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net18_64x64",
-           "doge_net50_64x64", "doge_net50_32x32", "doge_net18_32x32", "doge_net50_cifar"]
+           "doge_net50_64x64", "doge_net50_32x32", "doge_net18_32x32", "doge_net50_cifar", "doge_net18_cifar",
+           "bot_net50_l1_cifar"]
 
 
 def get_n_params(model):
@@ -296,11 +297,23 @@ def doge_net50_32x32(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
 
 
 def doge_net50_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
-    return BotNet(BottleNeck, [6, 6, 2, 2], num_classes=num_classes,
-                  resolution=resolution, heads=heads, layer3="Transformer")  # resnet50加入两层transformer
+    return BotNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes,
+                  resolution=resolution, heads=heads, layer3="Transformer")
 
 
-def main():
+def doge_net18_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
+    return BotNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
+                  resolution=resolution, heads=heads, layer3="Transformer")
+
+
+def bot_net50_l1_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
+    return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,
+                  resolution=resolution, heads=heads, layer3="CNN")
+
+
+if __name__ == '__main__':
+    from torchsummary import summary
+
     x = torch.randn([2, 3, 32, 32])
     model = doge_net50_cifar(resolution=tuple(x.shape[2:]), heads=8)  # 18857295
     # model = doge_net50_64x64(resolution=tuple(x.shape[2:]), heads=8)  # 4178255
@@ -312,7 +325,3 @@ def main():
 
     # 打印网络结构
     summary(model, input_size=[(3, 32, 32)], batch_size=1, device="cpu")
-
-
-if __name__ == '__main__':
-    main()
