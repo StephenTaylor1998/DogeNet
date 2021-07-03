@@ -16,7 +16,7 @@
     使用命令 python main.py 模型训练后会打印训练日志但不会保存，可以通过重定位获取日志。日志文件放入data/logs中即可。linux用户可尝试bash xxx.sh > xxx.log.txt获取日志。例如
 
 ```bash
-sh train_resnet18_multi_GPU.sh > ./data/logs/resnet18.log.txt
+sh train_DogeNet_multi_GPU.sh > ./data/logs/resnet18.log.txt
 ```
 
  - 注释

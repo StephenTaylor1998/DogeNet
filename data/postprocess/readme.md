@@ -27,7 +27,7 @@
 Example
 
 ```bash
-sh train_resnet18_multi_GPU.sh > ./data/logs/resnet18.log.txt
+sh train_DogeNet_multi_GPU.sh > ./data/logs/resnet18.log.txt
 ```
 
  - Annotations
