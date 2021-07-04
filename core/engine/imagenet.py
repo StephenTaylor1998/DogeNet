@@ -34,11 +34,19 @@ def main_worker(gpu, ngpus_per_node, args):
                                 world_size=args.world_size, rank=args.rank)
     # create model
     if args.pretrained:
-        print("=> using pre-trained model '{}'".format(args.arch))
-        model = models.__dict__[args.arch](pretrained=True, num_classes=args.classes)
+        try:
+            print("=> using pre-trained model '{}'".format(args.arch))
+            model = models.__dict__[args.arch](pretrained=True, num_classes=args.classes, args=args)
+        except:
+            print("=> using pre-trained model '{}'".format(args.arch))
+            model = models.__dict__[args.arch](pretrained=True, num_classes=args.classes)
     else:
-        print("=> creating model '{}'".format(args.arch))
-        model = models.__dict__[args.arch](num_classes=args.classes)
+        try:
+            print("=> creating model '{}'".format(args.arch))
+            model = models.__dict__[args.arch](num_classes=args.classes, args=args)
+        except:
+            print("=> creating model '{}'".format(args.arch))
+            model = models.__dict__[args.arch](num_classes=args.classes)
 
     if not torch.cuda.is_available():
         print('using CPU, this will be slow')
@@ -88,7 +96,7 @@ def main_worker(gpu, ngpus_per_node, args):
     cudnn.benchmark = True
 
     # Data loading code
-    train_dataset, val_dataset, test_dataset = get_data_by_name(args.data_format, data_dir=args.data)
+    train_dataset, val_dataset, test_dataset = get_data_by_name(args.data_format, data_dir=args.data_path)
 
     # train data loader is here, distribute is support #
     if args.distributed:

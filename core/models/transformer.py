@@ -5,9 +5,8 @@ import torch.nn.functional as F
 from torchvision import models
 
 
-__all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net18_64x64",
-           "doge_net50_64x64", "doge_net50_32x32", "doge_net18_32x32", "doge_net50_cifar", "doge_net18_cifar",
-           "bot_net50_l1_cifar"]
+__all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net26",
+           "doge_net50"]
 
 
 def get_n_params(model):
@@ -149,12 +148,12 @@ class DogeNeck(nn.Module):
 # https://github.com/kuangliu/pytorch-cifar/blob/master/models/resnet.py
 class BotNet(nn.Module):
     def __init__(self, block, num_blocks, num_classes=15, resolution=(224, 224), heads=4,
-                 layer3: str = "CNN"):
+                 layer3: str = "CNN", in_channel=3):
         super(BotNet, self).__init__()
         self.in_planes = 64
         self.resolution = list(resolution)
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv2d(in_channel, 64, kernel_size=7, stride=2, padding=3, bias=False)
         if self.conv1.stride[0] == 2:
             self.resolution[0] /= 2
         if self.conv1.stride[1] == 2:
@@ -211,12 +210,12 @@ class BotNet(nn.Module):
 
 
 class DogeNet(nn.Module):
-    def __init__(self, block, num_blocks, num_classes=15, resolution=(224, 224), heads=4):
+    def __init__(self, block, num_blocks, num_classes=15, resolution=(224, 224), heads=4, in_channel=3):
         super(DogeNet, self).__init__()
         self.in_planes = 64
         self.resolution = list(resolution)
 
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1, bias=False)
+        self.conv1 = nn.Conv2d(in_channel, 64, kernel_size=3, stride=2, padding=1, bias=False)
         if self.conv1.stride[0] == 2:
             self.resolution[0] /= 2
         if self.conv1.stride[1] == 2:
@@ -270,52 +269,37 @@ def res_net50(num_classes=15, **kwargs):
     return models.resnet50(num_classes=num_classes)  # 原始的resnet50，未加入transformer
 
 
-def bot_net50_l1(num_classes=15, resolution=(224, 224), heads=4, **kwargs):
-    return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,
-                  resolution=resolution, heads=heads, layer3="CNN")  # resnet50加入一层transformer
+def bot_net50_l1(num_classes=15, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,  # resnet50加入一层transformer
+                  resolution=in_shape[1:], heads=heads, layer3="CNN", in_channel=in_shape[0])
 
 
-def bot_net50_l2(num_classes=15, resolution=(224, 224), heads=4, **kwargs):
-    return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,
-                  resolution=resolution, heads=heads, layer3="Transformer")  # resnet50加入两层transformer
+def bot_net50_l2(num_classes=15, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,  # resnet50加入两层transformer
+                  resolution=in_shape[1:], heads=heads, layer3="Transformer", in_channel=in_shape[0])
 
 
-def doge_net18_64x64(num_classes=15, resolution=(64, 64), heads=4, **kwargs):
-    return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes, resolution=resolution, heads=heads)
+def doge_net26(num_classes=15, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
+                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
-def doge_net50_64x64(num_classes=15, resolution=(64, 64), heads=4, **kwargs):
-    return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes, resolution=resolution, heads=heads)
-
-
-def doge_net18_32x32(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
-    return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes, resolution=resolution, heads=heads)
-
-
-def doge_net50_32x32(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
-    return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes, resolution=resolution, heads=heads)
-
-
-def doge_net50_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
-    return BotNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes,
-                  resolution=resolution, heads=heads, layer3="Transformer")
-
-
-def doge_net18_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
-    return BotNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
-                  resolution=resolution, heads=heads, layer3="Transformer")
-
-
-def bot_net50_l1_cifar(num_classes=15, resolution=(32, 32), heads=4, **kwargs):
-    return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,
-                  resolution=resolution, heads=heads, layer3="CNN")
+def doge_net50(num_classes=15, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes,
+                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 if __name__ == '__main__':
     from torchsummary import summary
-
+    from core.utils.argparse import arg_parse
+    args = arg_parse().parse_args()
+    args.in_shape = (3, 32, 32)
     x = torch.randn([2, 3, 32, 32])
-    model = doge_net50_cifar(resolution=tuple(x.shape[2:]), heads=8)  # 18857295
+    model = doge_net26(args=args, heads=8)  # 18857295
     # model = doge_net50_64x64(resolution=tuple(x.shape[2:]), heads=8)  # 4178255
     # model = efficient_b0()
     # model = efficientnet_pytorch.EfficientNet.from_name("efficientnet-b0")

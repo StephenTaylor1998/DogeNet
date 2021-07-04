@@ -5,6 +5,7 @@ cifar_normalize = transforms.Normalize(mean=[0.4914, 0.4822, 0.4465],
                                        std=[0.2023, 0.1994, 0.2010])
 
 cifar_transform_train = transforms.Compose([
+    # transforms.RandomRotation((60, 60)),
     transforms.RandomCrop(32, padding=4),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor(),
@@ -12,6 +13,7 @@ cifar_transform_train = transforms.Compose([
 ])
 
 cifar_transform_test = transforms.Compose([
+    # transforms.RandomRotation((60, 60)),
     transforms.ToTensor(),
     cifar_normalize,
 ])

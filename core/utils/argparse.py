@@ -9,8 +9,7 @@ def arg_parse():
                          and callable(models.__dict__[name]))
 
     parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
-    parser.add_argument('data', metavar='DIR',
-                        help='path to dataset')
+    parser.add_argument('--data-path', metavar='DIR', help='path to dataset', default='./data/dataset')
     parser.add_argument('-d', '--data_format', metavar='DATA_FORMAT', default='imagefolder',
                         choices=['image_folder', 'imagenet', 'cifar10', 'cifar100', 'mnist',
                                  'fashion_mnist'],
@@ -52,11 +51,11 @@ def arg_parse():
                         help='evaluate model on test set')
     parser.add_argument('--pretrained', dest='pretrained', action='store_true',
                         help='use pre-trained model')
-    parser.add_argument('--world-size', default=-1, type=int,
+    parser.add_argument('--world-size', default=1, type=int,  # -1
                         help='number of nodes for distributed training')
-    parser.add_argument('--rank', default=-1, type=int,
+    parser.add_argument('--rank', default=0, type=int,  # -1
                         help='node rank for distributed training')
-    parser.add_argument('--dist-url', default='tcp://224.66.41.62:23456', type=str,
+    parser.add_argument('--dist-url', default='tcp://127.0.0.1:8889', type=str,
                         help='url used to set up distributed training')
     parser.add_argument('--dist-backend', default='nccl', type=str,
                         help='distributed backend')
@@ -64,9 +63,13 @@ def arg_parse():
                         help='seed for initializing training. ')
     parser.add_argument('--gpu', default=None, type=int,
                         help='GPU id to use.')
-    parser.add_argument('--multiprocessing-distributed', action='store_true',
+    parser.add_argument('--multiprocessing-distributed', action='store_true', default='True',
                         help='Use multi-processing distributed training to launch '
                              'N processes per node, which has N GPUs. This is the '
                              'fastest way to use PyTorch for either single node or '
                              'multi node data parallel training')
+
+    # add on args
+    parser.add_argument('--in-shape', default=(3, 32, 32), nargs='+', type=int,
+                        help='Input image.')
     return parser
