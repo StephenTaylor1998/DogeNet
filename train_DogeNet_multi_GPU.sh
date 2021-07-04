@@ -1,17 +1,16 @@
-
-#python train_imagenet.py -d cifar10 -a doge_net18_cifar -b 2048 -j 2 -c 10 --epoch 250 \
-#--dist-url 'tcp://127.0.0.1:8889' --dist-backend 'nccl' --multiprocessing-distributed --world-size 1 --rank 0 \
-# ./data/dataset
-
-python train_imagenet.py -d cifar10 -a doge_net50_cifar -b 2048 -j 2 -c 10 --epoch 250 \
---dist-url 'tcp://127.0.0.1:8889' --dist-backend 'nccl' --multiprocessing-distributed --world-size 1 --rank 0 \
-./data/dataset
-
-#python train_imagenet.py -d cifar10 -a bot_net50_l1_cifar -b 2048 -j 2 -c 10 --epoch 250 \
-#--dist-url 'tcp://127.0.0.1:8889' --dist-backend 'nccl' --multiprocessing-distributed --world-size 1 --rank 0 \
-#./data/dataset
+#!/bin/bash
+#/home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/
+#/home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/svhn/
 
 
-# transformer models are defined in file "core/models/transformer.py"
-#python train_imagenet.py -d cifar10 -a doge_net50_cifar -b 512 -j 2 -c 10 --epoch 400 --dist-url 'tcp://127.0.0.1:8889' \
-#--dist-backend 'nccl' --multiprocessing-distributed --world-size 1 --rank 0 ./data/dataset --weight-decay 5e-4 \
+python train_imagenet.py -d image_folder -a bot_net50_l1 -b 512 -j 2 -c 10 --epoch 1 --in-shape 3 224 224 \
+--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ > bot_net50_l1.log
+
+python train_imagenet.py -d image_folder -a bot_net50_l2 -b 512 -j 2 -c 10 --epoch 1 --in-shape 3 224 224 \
+--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ > bot_net50_l2.log
+
+python train_imagenet.py -d image_folder -a doge_net26 -b 512 -j 2 -c 10 --epoch 1 --in-shape 3 224 224 \
+--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ > doge_net26.log
+
+python train_imagenet.py -d image_folder -a doge_net50 -b 512 -j 2 -c 10 --epoch 2 --in-shape 3 224 224 \
+--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ > doge_net50.log
