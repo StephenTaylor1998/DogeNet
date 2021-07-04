@@ -6,7 +6,7 @@ from torchvision import models
 
 
 __all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net26",
-           "doge_net50"]
+           "doge_net50", "doge_net_2x1x3x2"]
 
 
 def get_n_params(model):
@@ -290,6 +290,12 @@ def doge_net26(num_classes=15, args=None, heads=4, **kwargs):
 def doge_net50(num_classes=15, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes,
+                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+
+
+def doge_net_2x1x3x2(num_classes=15, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 

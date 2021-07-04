@@ -16,7 +16,7 @@ def copy_weights(arg, epoch):
     # print('making dir ', folder_path)
     os.makedirs(folder_path, exist_ok=True)
 
-    new_checkpoint = f'checkpoint_epoch{epoch}.pth.tar'
+    new_checkpoint = f'checkpoint_epoch{epoch+1}.pth.tar'
     origin_checkpoint = 'checkpoint.pth.tar'
     model_best_name = 'model_best.pth.tar'
 
