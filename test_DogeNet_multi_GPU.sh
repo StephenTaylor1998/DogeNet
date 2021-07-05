@@ -30,13 +30,13 @@ echo "[INFO] Starting..."
 #-t --resume data/weights/doge_net50_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
 
 # 94.2  r90 - 83.4 - 85.4
-python train_imagenet.py -d image_folder -a res_net50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
---data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
--t --resume data/weights/res_net50_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
+#python train_imagenet.py -d image_folder -a res_net50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#-t --resume data/weights/res_net50_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
 
 # 94.2  r90 - 83.4 - 85.4
-#python train_imagenet.py -d image_folder -a res_net26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
-#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
-#-t --resume data/weights/res_net26_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
+python train_imagenet.py -d image_folder -a res_net26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+-t --resume data/weights/res_net26_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
 
 echo "[INFO] Done."
