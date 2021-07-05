@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torchvision import models
 
 __all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net26",
-           "doge_net50", "doge_net_2x1x3x2"]
+           "doge_net50", "doge_net_2x1x3x2", "res_net26"]
 
 
 def get_n_params(model):

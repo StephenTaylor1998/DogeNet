@@ -1,6 +1,6 @@
 from torchvision import datasets
 from torchvision.transforms import transforms
-from core.datasets.transformer.custom_transform import *
+from core.datasets.transforms.custom_transform import *
 
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],

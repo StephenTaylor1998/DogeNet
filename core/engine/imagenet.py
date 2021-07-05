@@ -125,10 +125,10 @@ def main_worker(gpu, ngpus_per_node, args):
             batch_size=args.batch_size, shuffle=False,
             num_workers=args.workers, pin_memory=True)
 
-        validate(train_loader, model, criterion, args)
-        print('TEST IN TRAIN SET')
-        validate(val_loader, model, criterion, args)
-        print('TEST IN VAL SET')
+        # validate(train_loader, model, criterion, args)
+        # print('TEST IN TRAIN SET')
+        # validate(val_loader, model, criterion, args)
+        # print('TEST IN VAL SET')
         validate(test_loader, model, criterion, args)
         print('TEST IN TEST SET')
         return
