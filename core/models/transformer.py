@@ -307,9 +307,9 @@ if __name__ == '__main__':
     from core.utils.argparse import arg_parse
 
     args = arg_parse().parse_args()
-    args.in_shape = (3, 32, 32)
-    x = torch.randn([2, 3, 32, 32])
-    model = doge_net26(args=args, heads=8)  # 18857295
+    args.in_shape = (3, 224, 224)
+    x = torch.randn([1, 3, 224, 224])
+    model = res_net26(args=args, heads=4)  # 18857295
     # model = doge_net50_64x64(resolution=tuple(x.shape[2:]), heads=8)  # 4178255
     # model = efficient_b0()
     # model = efficientnet_pytorch.EfficientNet.from_name("efficientnet-b0")
@@ -318,4 +318,4 @@ if __name__ == '__main__':
     print(get_n_params(model))
 
     # 打印网络结构
-    summary(model, input_size=[(3, 32, 32)], batch_size=1, device="cpu")
+    summary(model, input_size=[(3, 224, 224)], batch_size=1, device="cpu")
