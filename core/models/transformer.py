@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 
-
 __all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net26",
            "doge_net50", "doge_net_2x1x3x2"]
 
@@ -261,39 +260,43 @@ class DogeNet(nn.Module):
         return out
 
 
-def efficient_b0(num_classes=15, **kwargs):
-    return efficientnet_pytorch.EfficientNet.from_name("efficientnet-b0")  # 引用的最好的纯卷积神经网络
+def efficient_b0(num_classes=10, **kwargs):
+    return efficientnet_pytorch.EfficientNet.from_name("efficientnet-b0", num_classes=num_classes)
 
 
-def res_net50(num_classes=15, **kwargs):
-    return models.resnet50(num_classes=num_classes)  # 原始的resnet50，未加入transformer
+def res_net50(num_classes=10, **kwargs):
+    return models.ResNet(models.resnet.Bottleneck, [3, 4, 6, 3], num_classes=num_classes)
 
 
-def bot_net50_l1(num_classes=15, args=None, heads=4, **kwargs):
+def res_net26(num_classes=10, **kwargs):
+    return models.ResNet(models.resnet.Bottleneck, [2, 2, 2, 2], num_classes=num_classes)
+
+
+def bot_net50_l1(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,  # resnet50加入一层transformer
                   resolution=in_shape[1:], heads=heads, layer3="CNN", in_channel=in_shape[0])
 
 
-def bot_net50_l2(num_classes=15, args=None, heads=4, **kwargs):
+def bot_net50_l2(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return BotNet(BottleNeck, [3, 4, 6, 3], num_classes=num_classes,  # resnet50加入两层transformer
                   resolution=in_shape[1:], heads=heads, layer3="Transformer", in_channel=in_shape[0])
 
 
-def doge_net26(num_classes=15, args=None, heads=4, **kwargs):
+def doge_net26(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
-def doge_net50(num_classes=15, args=None, heads=4, **kwargs):
+def doge_net50(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes,
                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
-def doge_net_2x1x3x2(num_classes=15, args=None, heads=4, **kwargs):
+def doge_net_2x1x3x2(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
@@ -302,6 +305,7 @@ def doge_net_2x1x3x2(num_classes=15, args=None, heads=4, **kwargs):
 if __name__ == '__main__':
     from torchsummary import summary
     from core.utils.argparse import arg_parse
+
     args = arg_parse().parse_args()
     args.in_shape = (3, 32, 32)
     x = torch.randn([2, 3, 32, 32])
