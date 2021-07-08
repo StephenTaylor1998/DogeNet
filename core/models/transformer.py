@@ -5,7 +5,8 @@ import torch.nn.functional as F
 from torchvision import models
 
 __all__ = ["get_n_params", "efficient_b0", "res_net50", "bot_net50_l1", "bot_net50_l2", "doge_net26",
-           "doge_net50", "doge_net_2x1x3x2", "res_net26"]
+           "doge_net50", "doge_net_2x1x3x2", "res_net26", "doge_net50_no_embed", "doge_net_2x1x3x2_no_embed",
+           "doge_net26_no_embed"]
 
 
 def get_n_params(model):
@@ -35,16 +36,16 @@ class SE(nn.Module):
 
 
 class MHSA(nn.Module):
-    def __init__(self, n_dims, width=14, height=14, heads=4):
+    def __init__(self, n_dims, width=14, height=14, heads=4, position_embedding=True):
         super(MHSA, self).__init__()
         self.heads = heads
-
+        self.position_embedding = position_embedding
         self.query = nn.Conv2d(n_dims, n_dims, kernel_size=1)
         self.key = nn.Conv2d(n_dims, n_dims, kernel_size=1)
         self.value = nn.Conv2d(n_dims, n_dims, kernel_size=1)
-
-        self.rel_h = nn.Parameter(torch.randn([1, heads, n_dims // heads, 1, height]), requires_grad=True)
-        self.rel_w = nn.Parameter(torch.randn([1, heads, n_dims // heads, width, 1]), requires_grad=True)
+        if position_embedding:
+            self.rel_h = nn.Parameter(torch.randn([1, heads, n_dims // heads, 1, height]), requires_grad=True)
+            self.rel_w = nn.Parameter(torch.randn([1, heads, n_dims // heads, width, 1]), requires_grad=True)
 
         self.softmax = nn.Softmax(dim=-1)
 
@@ -56,10 +57,13 @@ class MHSA(nn.Module):
 
         content_content = torch.matmul(q.permute(0, 1, 3, 2), k)
 
-        content_position = (self.rel_h + self.rel_w).view(1, self.heads, C // self.heads, -1).permute(0, 1, 3, 2)
-        content_position = torch.matmul(content_position, q)
+        if self.position_embedding:
+            content_position = (self.rel_h + self.rel_w).view(1, self.heads, C // self.heads, -1).permute(0, 1, 3, 2)
+            content_position = torch.matmul(content_position, q)
+            energy = content_content + content_position
+        else:
+            energy = content_content
 
-        energy = content_content + content_position
         attention = self.softmax(energy)
 
         out = torch.matmul(v, attention.permute(0, 1, 3, 2))
@@ -107,7 +111,7 @@ class BottleNeck(nn.Module):
 class DogeNeck(nn.Module):
     expansion = 4
 
-    def __init__(self, in_planes, planes, stride=1, heads=4, mhsa=False, resolution=None):
+    def __init__(self, in_planes, planes, stride=1, heads=4, mhsa=False, resolution=None, position_embedding=True):
         super(DogeNeck, self).__init__()
 
         self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=1, bias=False)
@@ -119,7 +123,10 @@ class DogeNeck(nn.Module):
             self.conv2 = nn.Sequential(*self.conv2)
         else:
             self.conv2 = nn.ModuleList()
-            self.conv2.append(MHSA(planes, width=int(resolution[0]), height=int(resolution[1]), heads=heads))
+            self.conv2.append(MHSA(
+                planes, width=int(resolution[0]), height=int(resolution[1]),
+                heads=heads, position_embedding=position_embedding
+            ))
             if stride == 2:
                 self.conv2.append(nn.AvgPool2d(2, 2))
             self.conv2 = nn.Sequential(*self.conv2)
@@ -209,10 +216,12 @@ class BotNet(nn.Module):
 
 
 class DogeNet(nn.Module):
-    def __init__(self, block, num_blocks, num_classes=15, resolution=(224, 224), heads=4, in_channel=3):
+    def __init__(self, block, num_blocks, num_classes=15, resolution=(224, 224), heads=4, in_channel=3,
+                 position_embedding=True):
         super(DogeNet, self).__init__()
         self.in_planes = 64
         self.resolution = list(resolution)
+        self.position_embedding = position_embedding
 
         self.conv1 = nn.Conv2d(in_channel, 64, kernel_size=3, stride=2, padding=1, bias=False)
         if self.conv1.stride[0] == 2:
@@ -239,7 +248,7 @@ class DogeNet(nn.Module):
         strides = [stride] + [1] * (num_blocks - 1)
         layers = []
         for idx, stride in enumerate(strides):
-            layers.append(block(self.in_planes, planes, stride, heads, mhsa, self.resolution))
+            layers.append(block(self.in_planes, planes, stride, heads, mhsa, self.resolution, self.position_embedding))
             if stride == 2:
                 self.resolution[0] /= 2
                 self.resolution[1] /= 2
@@ -302,6 +311,24 @@ def doge_net_2x1x3x2(num_classes=10, args=None, heads=4, **kwargs):
                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
+def doge_net26_no_embed(num_classes=10, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
+                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0], position_embedding=False)
+
+
+def doge_net50_no_embed(num_classes=10, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return DogeNet(DogeNeck, [6, 6, 2, 2], num_classes=num_classes,
+                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0], position_embedding=False)
+
+
+def doge_net_2x1x3x2_no_embed(num_classes=10, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return DogeNet(DogeNeck, [2, 3, 1, 2], num_classes=num_classes,
+                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0], position_embedding=False)
+
+
 if __name__ == '__main__':
     from torchsummary import summary
     from core.utils.argparse import arg_parse
@@ -309,7 +336,7 @@ if __name__ == '__main__':
     args = arg_parse().parse_args()
     args.in_shape = (3, 224, 224)
     x = torch.randn([1, 3, 224, 224])
-    model = res_net26(args=args, heads=4)  # 18857295
+    model = doge_net26(args=args, heads=4)  # 904994
     # model = doge_net50_64x64(resolution=tuple(x.shape[2:]), heads=8)  # 4178255
     # model = efficient_b0()
     # model = efficientnet_pytorch.EfficientNet.from_name("efficientnet-b0")
