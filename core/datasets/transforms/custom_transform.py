@@ -32,7 +32,7 @@ ImageNetValidationTransform = transforms.Compose([
 ImageNetTestTransform = transforms.Compose([
     transforms.Resize(256),
     transforms.Pad(57, padding_mode="symmetric"),
-    transforms.RandomRotation((90, 90)),
+    transforms.RandomRotation((75, 75)),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     ImageNetNormalize,

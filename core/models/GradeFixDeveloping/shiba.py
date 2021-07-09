@@ -188,14 +188,18 @@ if __name__ == '__main__':
     from torchsummary import summary
     from core.utils.argparse import arg_parse
     from fvcore.nn import flop_count, FlopCountAnalysis
+    from core.models.transformer import doge_net26, doge_net50
 
     args = arg_parse().parse_args()
     args.in_shape = (3, 224, 224)
     x = torch.randn([1, 3, 224, 224])
-    # model = shibax26(args=args, heads=4)   #  824546 M   452469888 G
-    # model = shibax50(args=args, heads=4)   # 1111706 M   795923072 G
-    # model = dogex26(args=args, heads=4)    #  837090 M   658994304 G
-    model = dogex50(args=args, heads=4)    # 1126938 M  1013511296 G
+    # model = shibax26(args=args, heads=4)   # 0.824546 M   0.452469888 G
+    # model = shibax50(args=args, heads=4)   # 1.111706 M   0.795923072 G
+    # model = dogex26(args=args, heads=4)    # 0.837090 M   0.658994304 G
+    # model = dogex50(args=args, heads=4)    # 1.126938 M   1.013511296 G
+    # model = doge_net26(args=args, heads=4) # 0.917538 M   0.685035648 G
+    model = doge_net50(args=args, heads=4)  # 0.917538 M   0.685035648 G
+
     print(model(x).size())
     print(get_n_params(model))
     # 打印网络结构
