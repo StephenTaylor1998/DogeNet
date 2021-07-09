@@ -22,3 +22,7 @@ from .other_models import RegNetX_200MF, RegNetX_400MF, SENet18
 # from .other_models import VGG11, VGG13, VGG16, VGG19
 from .transformer import *
 # ------------------------------------------------ classify ------------------------------------------------ #
+
+# ----------------------------------------------- developing ----------------------------------------------- #
+from .GradeFixDeveloping import *
+# ----------------------------------------------- developing ----------------------------------------------- #
