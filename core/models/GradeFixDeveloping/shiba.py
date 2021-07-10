@@ -179,7 +179,7 @@ class FullAttNet(nn.Module):
             self.resolution[0] /= 2
             self.resolution[1] /= 2
 
-        self.layer1 = self._make_layer(block, 32, num_blocks[0], stride=2, heads=heads, mhsa=True)
+        self.layer1 = self._make_layer(block, 32, num_blocks[0], stride=2)
         self.layer2 = self._make_layer(block, 48, num_blocks[1], stride=2, heads=heads, mhsa=True)
         self.layer3 = self._make_layer(block, 96, num_blocks[2], stride=2, heads=heads, mhsa=True)
         self.layer4 = self._make_layer(block, 128, num_blocks[3], stride=1, heads=heads, mhsa=True)
@@ -218,38 +218,38 @@ class FullAttNet(nn.Module):
 
 def shiba26(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
-    return FullAttNet(ShibaNeckX, [2, 3, 1, 2], num_classes=num_classes,
-                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+    return FullAttNet(ShibaNeckX, [2, 2, 2, 2], num_classes=num_classes,
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 def shiba50(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return FullAttNet(ShibaNeckX, [6, 6, 2, 2], num_classes=num_classes,
-                    resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 def shibax26(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return HalfAttNet(ShibaNeckX, [2, 3, 1, 2], num_classes=num_classes,
-                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 def shibax50(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return HalfAttNet(ShibaNeckX, [6, 6, 2, 2], num_classes=num_classes,
-                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 def dogex26(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return HalfAttNet(DogeNeckX, [2, 3, 1, 2], num_classes=num_classes,
-                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 def dogex50(num_classes=10, args=None, heads=4, **kwargs):
     in_shape = args.in_shape
     return HalfAttNet(DogeNeckX, [6, 6, 2, 2], num_classes=num_classes,
-                   resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
 if __name__ == '__main__':
@@ -258,6 +258,7 @@ if __name__ == '__main__':
     from core.utils.argparse import arg_parse
     from fvcore.nn import flop_count, FlopCountAnalysis
     from core.models import doge_net26, doge_net50, b0
+
     args = arg_parse().parse_args()
     args.in_shape = (3, 224, 224)
     x = torch.randn([1, 3, 224, 224])
@@ -265,7 +266,7 @@ if __name__ == '__main__':
     # model = shibax50(args=args, heads=4)   # 1.111706 M   0.795923072 G
     # model = dogex26(args=args, heads=4)    # 0.837090 M   0.658994304 G
     # model = dogex50(args=args, heads=4)    # 1.126938 M   1.013511296 G
-    model = b0()                           # 5.288548 M   0.421872480 G
+    model = b0()  # 5.288548 M   0.421872480 G
     # model = doge_net26(args=args, heads=4) # 0.917538 M   0.685035648 G
     # model = doge_net50(args=args, heads=4)  # 0.917538 M   0.685035648 G
     # model = shiba26(args=args, heads=4)    # 0.746298 M   0.379743360 G
