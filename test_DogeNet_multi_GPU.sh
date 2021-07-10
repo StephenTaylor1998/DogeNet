@@ -39,9 +39,9 @@ echo "[INFO] Starting..."
 #--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
 #-t --resume data/weights/res_net26_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
 
-python train_imagenet.py -d image_folder -a shibax26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
---data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
--t --resume data/weights/shibax26_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
+#python train_imagenet.py -d image_folder -a shibax26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#-t --resume data/weights/shibax26_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
 
 #python train_imagenet.py -d image_folder -a shibax50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
 #--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
@@ -51,8 +51,13 @@ python train_imagenet.py -d image_folder -a shibax26 -b 512 -j 2 -c 10 --epoch 3
 #--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
 #-t --resume data/weights/dogex26_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch300.pth.tar
 
+# failed
 #python train_imagenet.py -d image_folder -a dogex50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
 #--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
 #-t --resume data/weights/dogex50_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch250.pth.tar
+
+#python train_imagenet.py -d image_folder -a b0 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#-t --resume data/weights/b0_epoch300_bs51_lr1.0e-01_image_folder/checkpoint_epoch246.pth.tar
 
 echo "[INFO] Done."

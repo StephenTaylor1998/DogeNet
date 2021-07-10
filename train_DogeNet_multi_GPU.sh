@@ -32,20 +32,33 @@ echo "[INFO] Starting..."
 #--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
 # > data/logs/res_net26.log
 
-python train_imagenet.py -d image_folder -a shibax26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
---data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
-> data/logs/shibax26.log
+#python train_imagenet.py -d image_folder -a shibax26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#> data/logs/shibax26.log
 
-python train_imagenet.py -d image_folder -a shibax50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
---data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
-> data/logs/shibax50.log
+#python train_imagenet.py -d image_folder -a shibax50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#> data/logs/shibax50.log
 
-python train_imagenet.py -d image_folder -a dogex26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
---data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
-> data/logs/dogex26.log
+#python train_imagenet.py -d image_folder -a dogex26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#> data/logs/dogex26.log
 
-python train_imagenet.py -d image_folder -a dogex50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
---data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
-> data/logs/dogex50.log
+#python train_imagenet.py -d image_folder -a dogex50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#> data/logs/dogex50.log
+
+#python train_imagenet.py -d image_folder -a b0 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#> data/logs/b0.log
+
+#python train_imagenet.py -d image_folder -a shiba50 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+#--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/ \
+#> data/logs/shiba50.log
+
+python train_imagenet.py -d image_folder -a doge26 -b 512 -j 2 -c 10 --epoch 300 --in-shape 3 224 224 \
+--data-path /home/aistudio/Desktop/remote/high-resolution-capsule/data/dataset/sub_imagenet/
+
+#> data/logs/doge26.log
 
 echo "[INFO] Done."
