@@ -16,7 +16,7 @@ def __down_load_weight__():
     return [_b0, _b1, _b2, _b3, _b4, _b5, _b6, _b7]
 
 
-def b0(pretrained=True, num_classes=1000, **kwargs):
+def b0(pretrained=False, num_classes=1000, **kwargs):
     if pretrained:
         return EfficientNet.from_pretrained('efficientnet-b0', num_classes=num_classes, **kwargs)
     else:
