@@ -49,8 +49,12 @@ class DSA(nn.Module):
         k = self.key(x)
         v = self.value(x)
         if self.attention_mode == "A":
-            attention = q + k
-            out = v * attention
+            # model "A"
+            # attention = q + k
+            # out = v * attention
+
+            # testing
+            out = v * q * k
 
         else:
             attention = q * k

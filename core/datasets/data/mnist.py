@@ -11,7 +11,7 @@ def classify_train_dataset(data_dir, transform=TinyImageNetTrainTransform, **kwa
 
 
 # val dataset example for tiny-image-net
-def classify_val_dataset(data_dir, transform=TinyImageNetvalidationTransform, **kwargs):
+def classify_val_dataset(data_dir, transform=TinyImageNetValidationTransform, **kwargs):
     return datasets.MNIST(root=data_dir, train=False, transform=transform, **kwargs)
 
 

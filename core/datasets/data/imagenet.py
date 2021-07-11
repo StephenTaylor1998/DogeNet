@@ -13,7 +13,7 @@ def classify_train_dataset(data_dir, transform=TinyImageNetTrainTransform, **kwa
 
 
 # val dataset example for tiny-image-net
-def classify_val_dataset(data_dir, transform=TinyImageNetvalidationTransform, **kwargs):
+def classify_val_dataset(data_dir, transform=TinyImageNetValidationTransform, **kwargs):
     val_dir = os.path.join(data_dir, 'val')
     return datasets.ImageNet(val_dir, transform=transform, download="False", **kwargs)
 

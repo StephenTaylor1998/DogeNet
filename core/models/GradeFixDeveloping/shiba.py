@@ -2,9 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from core.models.GradeFixDeveloping.mhsa import MHSAX, DSA
+from core.models.GradeFixDeveloping.operator import Conv2dM3
 
 __all__ = ["shibax26", "shibax50", "dogex26", "dogex50",
-           "shiba26", "shiba50", ]
+           "shiba26", "shiba50", "m3x26"]
 
 
 class SE(nn.Module):
@@ -81,6 +82,45 @@ class ShibaNeckX(nn.Module):
         else:
             self.conv2 = nn.ModuleList()
             self.conv2.append(DSA(planes, view_size=3, attention_mode=attention_mode))
+            if stride == 2:
+                self.conv2.append(nn.AvgPool2d(2, 2))
+            self.conv2 = nn.Sequential(*self.conv2)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.conv3 = nn.Conv2d(planes, self.expansion * planes, kernel_size=1, bias=False)
+        self.bn3 = nn.BatchNorm2d(self.expansion * planes)
+
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_planes != self.expansion * planes:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_planes, self.expansion * planes, kernel_size=1, stride=stride),
+                nn.BatchNorm2d(self.expansion * planes)
+            )
+
+    def forward(self, x):
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = F.relu(self.bn2(self.conv2(out)))
+        out = self.bn3(self.conv3(out))
+        out += self.shortcut(x)
+        out = F.relu(out)
+        return out
+
+
+class M3Neck(nn.Module):
+    expansion = 4
+
+    def __init__(self, in_planes, planes, stride=1, mhsa=False, attention_mode="A", **kwargs):
+        super(M3Neck, self).__init__()
+
+        self.conv1 = nn.Conv2d(in_planes, planes, kernel_size=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(planes)
+        if not mhsa:
+            self.conv2 = nn.ModuleList()
+            self.conv2.append(nn.Conv2d(planes, planes, kernel_size=3, padding=1, stride=stride, bias=False))
+            self.conv2.append(SE(planes, planes // 2))
+            self.conv2 = nn.Sequential(*self.conv2)
+        else:
+            self.conv2 = nn.ModuleList()
+            self.conv2.append(Conv2dM3(planes, view_size=3, attention_mode=attention_mode))
             if stride == 2:
                 self.conv2.append(nn.AvgPool2d(2, 2))
             self.conv2 = nn.Sequential(*self.conv2)
@@ -252,12 +292,18 @@ def dogex50(num_classes=10, args=None, heads=4, **kwargs):
                       resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
 
 
+def m3x26(num_classes=10, args=None, heads=4, **kwargs):
+    in_shape = args.in_shape
+    return HalfAttNet(M3Neck, [2, 2, 2, 2], num_classes=num_classes,
+                      resolution=in_shape[1:], heads=heads, in_channel=in_shape[0])
+
+
 if __name__ == '__main__':
     from core.models import get_n_params
     from torchsummary import summary
     from core.utils.argparse import arg_parse
     from fvcore.nn import flop_count, FlopCountAnalysis
-    from core.models import doge_net26, doge_net50, b0
+    from core.models import doge_net26, doge_net50, b0, doge_net_2x1x3x2
 
     args = arg_parse().parse_args()
     args.in_shape = (3, 224, 224)
@@ -266,11 +312,12 @@ if __name__ == '__main__':
     # model = shibax50(args=args, heads=4)   # 1.111706 M   0.795923072 G
     # model = dogex26(args=args, heads=4)    # 0.837090 M   0.658994304 G
     # model = dogex50(args=args, heads=4)    # 1.126938 M   1.013511296 G
-    model = b0()  # 5.288548 M   0.421872480 G
+    # model = b0()  # 5.288548 M   0.421872480 G
     # model = doge_net26(args=args, heads=4) # 0.917538 M   0.685035648 G
     # model = doge_net50(args=args, heads=4)  # 0.917538 M   0.685035648 G
     # model = shiba26(args=args, heads=4)    # 0.746298 M   0.379743360 G
     # model = shiba50(args=args, heads=4)  # 0.746298 M   0.581701760 G
+    model = doge_net_2x1x3x2(args=args, heads=4)
 
     print(model(x).size())
     print(get_n_params(model))

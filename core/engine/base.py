@@ -158,38 +158,44 @@ def adjust_learning_rate(optimizer, epoch, args):
         param_group['lr'] = lr
 
 
-def adjust_learning_rate_cifar(optimizer, epoch, args, warm=10):
-    if epoch < warm:
-        lr = args.lr * (epoch / warm)
-
-    else:
-        if epoch < 90:
-            lr = args.lr
-        elif epoch < 160:
-            lr = args.lr * 0.1
-        elif epoch < 220:
-            lr = args.lr * 0.01
-        else:
-            lr = args.lr * 0.001
-
-    print(f"[INFO] Learning Rate = {lr}")
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
-
 # def adjust_learning_rate_cifar(optimizer, epoch, args, warm=10):
-#     epoch += 1
 #     if epoch < warm:
 #         lr = args.lr * (epoch / warm)
+#
 #     else:
-#         epoch = epoch - warm
-#         total = args.epochs - warm
-#         factor = np.cos(epoch * 3.1415926 / total) / 2.0 + 0.5 + 1e-10
-#         lr = args.lr * factor + 1e-9
-#         # print(factor)
+#         if epoch < 90:
+#             lr = args.lr
+#         elif epoch < 160:
+#             lr = args.lr * 0.1
+#         elif epoch < 220:
+#             lr = args.lr * 0.01
+#         else:
+#             lr = args.lr * 0.001
 #
 #     print(f"[INFO] Learning Rate = {lr}")
 #     for param_group in optimizer.param_groups:
 #         param_group['lr'] = lr
+
+
+def adjust_learning_rate_cifar(optimizer, epoch, args, warm=10):
+    if epoch < warm:
+        lr = args.lr * (epoch / warm) + 1e-3
+    else:
+        if epoch < 90:
+            lr = args.lr
+        elif epoch < 170:
+            factor = 1.0 - (epoch - 90) / (170 - 90) * 0.9
+            lr = args.lr * factor
+        elif epoch < 250:
+            factor = 1.0 - (epoch - 170) / (250 - 170) * 0.9
+            lr = args.lr * 0.1 * factor
+        else:
+            factor =0.96 ** (epoch - 250)
+            lr = args.lr * 0.01 * factor
+
+    print(f"[INFO] Learning Rate = {lr}")
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
 
 
 def accuracy(output, target, topk=(1,)):
@@ -215,12 +221,13 @@ if __name__ == '__main__':
     class Args:
         def __init__(self):
             self.lr = 0.1
-            self.epochs = 400
+            self.epochs = 300
             self.param_groups = []
     args = Args()
     model = torch.nn.Module()
 
     for i in range(args.epochs):
+        print(i)
         adjust_learning_rate_cifar(args, i, args)
 
 

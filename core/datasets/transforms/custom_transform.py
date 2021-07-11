@@ -5,7 +5,7 @@ __all__ = ['ImageNetNormalize',
            'ImageNetValidationTransform',
            'ImageNetTestTransform',
            'TinyImageNetTrainTransform',
-           'TinyImageNetvalidationTransform',
+           'TinyImageNetValidationTransform',
            'TinyImageNetTestTransform',
            'MNISTTrainTransform',
            'MNISTValidationTransform',
@@ -32,7 +32,7 @@ ImageNetValidationTransform = transforms.Compose([
 ImageNetTestTransform = transforms.Compose([
     transforms.Resize(256),
     transforms.Pad(57, padding_mode="symmetric"),
-    transforms.RandomRotation((75, 75)),
+    transforms.RandomRotation((90, 90)),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     ImageNetNormalize,
@@ -49,7 +49,7 @@ TinyImageNetTrainTransform = transforms.Compose([
     ImageNetNormalize,
 ])
 
-TinyImageNetvalidationTransform = transforms.Compose([
+TinyImageNetValidationTransform = transforms.Compose([
     transforms.ToTensor(),
     ImageNetNormalize,
 ])
